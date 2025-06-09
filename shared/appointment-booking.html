@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetUni - Agendar Cita</title>
-    <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/components.css">
-    <link rel="stylesheet" href="../css/sweetalert2.min.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/sweetalert2.min.css">
     <style>
 
          body {
@@ -917,9 +917,9 @@
         </form>
     </div>
 
-    <script src="../js/navigation.js"></script>
-    <script src="../js/sweetalert2.min.js"></script>
-    <script src="../js/components/appointment-booking.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/sweetalert2.min.js"></script>
+    <script src="../../js/global.js"></script>
     <script>
         // Variables globales
         let currentStep = 1;
@@ -969,11 +969,24 @@
         };
 
         function goBack() {
-            if (currentStep > 1) {
-                previousStep();
-            } else {
-                window.history.back();
-            }
+         // Detectar desde dónde viene el usuario
+            const referrer = document.referrer;
+             const urlParams = new URLSearchParams(window.location.search);
+            const returnUrl = urlParams.get('return');
+    
+            if (returnUrl) {
+                    // Si hay una URL de retorno específica
+                window.location.href = returnUrl;
+             } else if (referrer && referrer.includes('client/')) {
+                     // Si viene de una página del cliente, volver al dashboard del cliente
+                 window.location.href = '../client/dashboard.html';
+            } else if (referrer && referrer.includes('dashboard')) {
+                    // Si viene de cualquier dashboard
+                 window.history.back();
+             } else {
+                     // Por defecto, ir al dashboard del cliente
+                 window.location.href = '../client/dashboard.html';
+                 }
         }
 
         function selectPet(petId) {
@@ -1162,9 +1175,10 @@
                     denyButtonColor: '#3B82F6'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = '../client/appointments.html';
+                        // Ir a appointments con parámetro de confirmación
+                         window.location.href = '../client/appointments-confirmation.html?from=booking&id=VET' + Math.floor(Math.random() * 1000);
                     } else if (result.isDenied) {
-                        window.location.href = '../client/dashboard.html';
+                 window.location.href = '../client/dashboard.html';
                     }
                 });
             }, 3000);
@@ -1272,5 +1286,48 @@
             }
         });
     </script>
+    <script>
+// Validar que todas las rutas estén correctas al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Appointment booking page loaded');
+    
+    // Verificar que los archivos CSS se cargaron
+    const cssFiles = ['global.css', 'components.css', 'sweetalert2.min.css'];
+    cssFiles.forEach(file => {
+        const links = document.querySelectorAll(`link[href*="${file}"]`);
+        if (links.length === 0) {
+            console.warn(`CSS file not found: ${file}`);
+        }
+    });
+    
+    // Verificar que SweetAlert2 esté disponible
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 no está cargado correctamente');
+        
+        // Fallback para alerts
+        window.VetAlert = {
+            success: (title, text) => alert(`${title}: ${text}`),
+            error: (title, text) => alert(`Error - ${title}: ${text}`),
+            info: (title, text) => alert(`Info - ${title}: ${text}`),
+            confirm: (title, text) => Promise.resolve({isConfirmed: confirm(`${title}: ${text}`)}),
+            loading: (title) => console.log(`Loading: ${title}`),
+            close: () => console.log('Alert closed')
+        };
+    }
+    
+    // Agregar manejador de errores para navegación
+    window.addEventListener('error', function(e) {
+        if (e.message && e.message.includes('navigation')) {
+            console.error('Error de navegación en appointment-booking:', e);
+            // Fallback de navegación
+            if (typeof goBack === 'function') {
+                goBack = function() {
+                    window.location.href = '../client/dashboard.html';
+                };
+            }
+        }
+    });
+});
+</script>
 </body>
 </html>

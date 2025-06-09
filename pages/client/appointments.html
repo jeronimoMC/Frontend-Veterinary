@@ -1109,6 +1109,26 @@
             }, 500);
         });
     </script>
+    <script>
+function rescheduleAppointment(appointmentId) {
+    event.stopPropagation();
+    Swal.fire({
+        title: 'Reprogramar cita',
+        text: 'Serás redirigido al sistema de agendamiento para seleccionar una nueva fecha.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#2E7D5E',
+        cancelButtonColor: '#6B7280',
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // CORREGIR ESTA LÍNEA:
+            window.location.href = '../shared/appointment-booking.html?reschedule=' + appointmentId;
+        }
+    });
+}
+</script>
     <script src="../../js/navigation.js"></script>
     <script src="../../js/sweetalert2.min.js"></script>
 </body>
