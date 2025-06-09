@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetUni - Sistema Veterinaria Universitaria</title>
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="css/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            display: flex;
+            position: relative;
+        }
+
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #2E7D5E 0%, #1E3A8A 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="2.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .welcome-text {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .welcome-text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .university-badge {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .login-right {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            color: #1F2937;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-header p {
+            color: #6B7280;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #F9FAFB;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2E7D5E;
+            box-shadow: 0 0 0 3px rgba(46, 125, 94, 0.1);
+            background: white;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2E7D5E;
+        }
+
+        .forgot-password {
+            color: #2E7D5E;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .forgot-password:hover {
+            color: #1E3A8A;
+        }
+
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #2E7D5E 0%, #1E3A8A 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(46, 125, 94, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .role-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .role-indicator {
+            background: #F3F4F6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .role-dot.admin { background: #EF4444; }
+        .role-dot.vet { background: #10B981; }
+        .role-dot.assistant { background: #3B82F6; }
+        .role-dot.client { background: #F59E0B; }
+
+        /* Demo credentials */
+        .demo-credentials {
+            background: #F0F9FF;
+            border: 1px solid #BAE6FD;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            color: #0C4A6E;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .demo-list {
+            font-size: 0.85rem;
+            color: #075985;
+            line-height: 1.5;
+        }
+
+        .demo-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .demo-item:hover {
+            background: rgba(14, 116, 144, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 400px;
+                margin: 20px;
+            }
+
+            .login-left {
+                padding: 40px 30px;
+                min-height: 250px;
+            }
+
+            .login-left h1 {
+                font-size: 2rem;
+            }
+
+            .login-right {
+                padding: 40px 30px;
+            }
+
+            .university-badge {
+                position: static;
+                transform: none;
+                margin-top: 20px;
+            }
+        }
+
+        /* Error states */
+        .form-input.error {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+
+        .error-message {
+            color: #EF4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Loading state */
+        .login-button.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .login-button.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L13.09 8.26L19 9L13.09 9.74L12 16L10.91 9.74L5 9L10.91 8.26L12 2M6.5 12.5L7.5 16L10 17L7.5 18L6.5 21.5L5.5 18L3 17L5.5 16L6.5 12.5M17.5 12.5L18.5 16L21 17L18.5 18L17.5 21.5L16.5 18L14 17L16.5 16L17.5 12.5Z"/>
+                </svg>
+            </div>
+            
+            <div class="welcome-text">
+                <h1>VetUni</h1>
+                <p>Sistema integral para la gestión veterinaria universitaria. Cuidando la salud de nuestras mascotas con excelencia académica.</p>
+            </div>
+            
+            <div class="university-badge">
+                Universidad Alexander von Humboldt
+            </div>
+        </div>
+
+        <div class="login-right">
+            <form class="login-form" id="loginForm">
+                <div class="form-header">
+                    <h2>Iniciar Sesión</h2>
+                    <p>Accede a tu cuenta para gestionar pacientes y servicios</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="nombre@universidad.edu.co"
+                        required
+                    >
+                    <div class="error-message" id="emailError">Por favor ingresa un correo válido</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="••••••••"
+                        required
+                    >
+                    <div class="error-message" id="passwordError">La contraseña es requerida</div>
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Recordarme</label>
+                    </div>
+                    <a href="#" class="forgot-password" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="login-button" id="loginButton">
+                    Iniciar Sesión
+                </button>
+
+                <div class="demo-credentials">
+                    <div class="demo-title">🚀 Credenciales de demostración:</div>
+                    <div class="demo-list">
+                        <div class="demo-item" onclick="fillDemo('cliente@demo.com', 'demo123')">
+                            <span><strong>Cliente:</strong> cliente@demo.com</span>
+                            <span>demo123</span>
+                        </div>
+                        <div class="demo-item" onclick="fillDemo('admin@demo.com', 'admin123')">
+                            <span><strong>Admin:</strong> admin@demo.com</span>
+                            <span>admin123</span>
+                        </div>
+                        <div class="demo-item" onclick="fillDemo('veterinario@demo.com', 'vet123')">
+                            <span><strong>Veterinario:</strong> veterinario@demo.com</span>
+                            <span>vet123</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-indicators">
+                    <div class="role-indicator">
+                        <div class="role-dot admin"></div>
+                        Administrador
+                    </div>
+                    <div class="role-indicator">
+                        <div class="role-dot vet"></div>
+                        Veterinario
+                    </div>
+                    <div class="role-indicator">
+                        <div class="role-dot assistant"></div>
+                        Asistente
+                    </div>
+                    <div class="role-indicator">
+                        <div class="role-dot client"></div>
+                        Cliente
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="js/sweetalert2.min.js"></script>
+    <script src="js/global.js"></script>
+    
+    <script>
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('loginButton');
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Validate inputs
+            if (!email) {
+                showError('email', 'El correo electrónico es requerido');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showError('email', 'Por favor ingresa un correo válido');
+                return;
+            }
+            
+            if (!password) {
+                showError('password', 'La contraseña es requerida');
+                return;
+            }
+            
+            if (password.length < 3) {
+                showError('password', 'La contraseña debe tener al menos 3 caracteres');
+                return;
+            }
+            
+            // Loading state
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            // Show loading alert
+            VetAlert.loading('Iniciando sesión...');
+            
+            // Simulate login process
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+                VetAlert.close();
+                
+                // Determine user type and redirect
+                let redirectUrl = '';
+                let userType = '';
+                
+                if (email.includes('admin')) {
+                    redirectUrl = 'pages/admin/dashboard.html';
+                    userType = 'Administrador';
+                } else if (email.includes('vet') || email.includes('veterinario')) {
+                    redirectUrl = 'pages/veterinarian/dashboard.html';
+                    userType = 'Veterinario';
+                } else if (email.includes('cliente') || email.includes('client')) {
+                    redirectUrl = 'pages/client/dashboard.html';
+                    userType = 'Cliente';
+                } else {
+                    // Por defecto, ir al dashboard de cliente
+                    redirectUrl = 'pages/client/dashboard.html';
+                    userType = 'Cliente';
+                }
+                
+                // Show success message and redirect
+                VetAlert.success(
+                    `¡Bienvenido!`,
+                    `Accediendo como ${userType}...`
+                ).then(() => {
+                    window.location.href = redirectUrl;
+                });
+                
+            }, 1500);
+        });
+        
+        function fillDemo(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            VetAlert.toast('Credenciales cargadas', 'info');
+        }
+        
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            field.classList.add('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+        
+        function clearErrors() {
+            const inputs = document.querySelectorAll('.form-input');
+            const errors = document.querySelectorAll('.error-message');
+            
+            inputs.forEach(input => input.classList.remove('error'));
+            errors.forEach(error => error.classList.remove('show'));
+        }
+        
+        function showForgotPassword() {
+            VetAlert.info(
+                'Recuperar Contraseña',
+                'Próximamente: Función de recuperación de contraseña.\n\nPor ahora, puedes usar las credenciales de demostración.'
+            );
+        }
+        
+        // Clear errors on input
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorDiv = document.getElementById(this.id + 'Error');
+                if (errorDiv) {
+                    errorDiv.classList.remove('show');
+                }
+            });
+        });
+
+        // Show welcome message when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                VetAlert.toast(
+                    '👋 ¡Bienvenido a VetUni! Usa las credenciales de demostración.',
+                    'info'
+                );
+            }, 1000);
+        });
+    </script>
+    <script src="js/navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetUni - Historial Médico Completo</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/sweetalert2.min.css">
+    <style>
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
+            color: #111827;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .medical-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 50px;
+            height: 50px;
+            background: #F3F4F6;
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #E5E7EB;
+            transform: translateY(-2px);
+        }
+
+        .header-content {
+            text-align: center;
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #6B7280;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .patient-info {
+            background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .patient-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .patient-details h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .patient-details p {
+            color: #6B7280;
+            margin-bottom: 3px;
+        }
+
+        .patient-stats {
+            display: flex;
+            gap: 30px;
+            margin-left: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2E7D5E;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6B7280;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-section {
+            padding: 25px;
+        }
+
+        .sidebar-section:not(:last-child) {
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vital-signs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .vital-item {
+            background: #F9FAFB;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .vital-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .vital-label {
+            font-size: 0.8rem;
+            color: #6B7280;
+        }
+
+        .vital-status {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .vital-status.normal {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .vital-status.warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .vital-status.critical {
+            background: #FEF2F2;
+            color: #991B1B;
+        }
+
+        .allergies-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .allergy-item {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .allergy-name {
+            font-weight: 600;
+            color: #991B1B;
+            margin-bottom: 3px;
+        }
+
+        .allergy-severity {
+            color: #B91C1C;
+            font-size: 0.8rem;
+        }
+
+        .medications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .medication-item {
+            background: #F0F9FF;
+            border: 1px solid #BAE6FD;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .medication-name {
+            font-weight: 600;
+            color: #1E40AF;
+            margin-bottom: 3px;
+        }
+
+        .medication-details {
+            font-size: 0.8rem;
+            color: #1D4ED8;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-header {
+            padding: 25px;
+            border-bottom: 1px solid #F3F4F6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+            color: #374151;
+        }
+
+        .filters-section {
+            padding: 20px 25px;
+            background: #F9FAFB;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            margin-bottom: 5px;
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .content-body {
+            padding: 25px;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #E5E7EB;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 70px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 25px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #2E7D5E;
+            z-index: 1;
+        }
+
+        .timeline-item.critical::before {
+            border-color: #EF4444;
+        }
+
+        .timeline-item.warning::before {
+            border-color: #F59E0B;
+        }
+
+        .timeline-item.surgery::before {
+            border-color: #8B5CF6;
+        }
+
+        .record-card {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .record-card:hover {
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .record-date-time {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .record-date {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .date-day {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .date-month {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .record-time {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        .record-type {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .type-consultation {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .type-vaccination {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .type-surgery {
+            background: #FEF2F2;
+            color: #991B1B;
+        }
+
+        .type-grooming {
+            background: #EDE9FE;
+            color: #5B21B6;
+        }
+
+        .type-laboratory {
+            background: #F0F9FF;
+            color: #0369A1;
+        }
+
+        .type-emergency {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .record-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .record-content {
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .record-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-icon {
+            width: 16px;
+            height: 16px;
+            fill: #6B7280;
+        }
+
+        .detail-text {
+            font-size: 0.85rem;
+            color: #374151;
+        }
+
+        .record-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .vet-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vet-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .vet-name {
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: transparent;
+            color: #2E7D5E;
+            border: 1px solid #2E7D5E;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #2E7D5E;
+            color: white;
+        }
+
+        .attachments {
+            margin-top: 15px;
+        }
+
+        .attachment-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .attachment-item {
+            background: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .attachment-item:hover {
+            background: #E5E7EB;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #F3F4F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quick-action {
+            background: linear-gradient(135deg, #F9FAFB, #F3F4F6);
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .quick-action:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .quick-action-desc {
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 300px 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .patient-stats {
+                margin-left: 0;
+                margin-top: 20px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .medical-container {
+                padding: 15px;
+            }
+
+            .back-button {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .header-content {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .patient-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .vital-signs {
+                grid-template-columns: 1fr;
+            }
+
+            .record-details {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="medical-container">
+        <!-- Header -->
+        <div class="header">
+            <button class="back-button" onclick="goBack()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#6B7280">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+            
+            <div class="header-content">
+                <div class="header-icon">📋</div>
+                <h1 class="page-title">Historial Médico Completo</h1>
+                <p class="page-subtitle">Registro detallado de la atención veterinaria</p>
+                
+                <div class="patient-info">
+                    <div class="patient-avatar">🐕</div>
+                    <div class="patient-details">
+                        <h2>Max</h2>
+                        <p><strong>Raza:</strong> Golden Retriever</p>
+                        <p><strong>Edad:</strong> 3 años • <strong>Peso:</strong> 28.5 kg</p>
+                        <p><strong>Propietario:</strong> Carlos Rodríguez</p>
+                        <p><strong>Registro:</strong> #PET001 • <strong>Microchip:</strong> 123456789012345</p>
+                    </div>
+                    <div class="patient-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">24</div>
+                            <div class="stat-label">Consultas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Vacunas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">Cirugías</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Grooming</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Signos Vitales Recientes -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#2E7D5E">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Signos Vitales
+                    </h3>
+                    <div class="vital-signs">
+                        <div class="vital-item">
+                            <div class="vital-value">28.5</div>
+                            <div class="vital-label">Peso (kg)</div>
+                            <div class="vital-status normal">Normal</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">38.2</div>
+                            <div class="vital-label">Temp (°C)</div>
+                            <div class="vital-status normal">Normal</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">85</div>
+                            <div class="vital-label">FC (lpm)</div>
+                            <div class="vital-status normal">Normal</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">22</div>
+                            <div class="vital-label">FR (rpm)</div>
+                            <div class="vital-status normal">Normal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alergias -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#EF4444">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                        </svg>
+                        Alergias
+                    </h3>
+                    <div class="allergies-list">
+                        <div class="allergy-item">
+                            <div class="allergy-name">Penicilina</div>
+                            <div class="allergy-severity">Severidad: Alta</div>
+                        </div>
+                        <div class="allergy-item">
+                            <div class="allergy-name">Polen de césped</div>
+                            <div class="allergy-severity">Severidad: Moderada</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medicamentos Actuales -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#3B82F6">
+                            <path d="M12 2l3.09 6.26L22 9l-5.91 3.74L12 22l-4.09-3.26L2 15l6.91-3.74L12 2z"/>
+                        </svg>
+                        Medicamentos
+                    </h3>
+                    <div class="medications-list">
+                        <div class="medication-item">
+                            <div class="medication-name">Carprofeno 25mg</div>
+                            <div class="medication-details">2 veces al día • 7 días</div>
+                        </div>
+                        <div class="medication-item">
+                            <div class="medication-name">Suplemento articular</div>
+                            <div class="medication-details">1 vez al día • Continuo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="content-header">
+                    <h2 class="content-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#2E7D5E">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Registro Cronológico
+                    </h2>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" onclick="exportFullHistory()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            Exportar
+                        </button>
+                        <button class="btn btn-primary" onclick="addNewRecord()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Nuevo Registro
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions" style="padding: 25px; padding-bottom: 0;">
+                    <a href="../shared/appointment-booking.html?pet=max&service=consultation" class="quick-action">
+                        <div class="quick-action-icon">📅</div>
+                        <div class="quick-action-title">Agendar Cita</div>
+                        <div class="quick-action-desc">Programar nueva consulta</div>
+                    </a>
+                    
+                    <a href="#" class="quick-action" onclick="requestRecords()">
+                        <div class="quick-action-icon">📄</div>
+                        <div class="quick-action-title">Solicitar Registros</div>
+                        <div class="quick-action-desc">Obtener copias oficiales</div>
+                    </a>
+                    
+                    <a href="#" class="quick-action" onclick="shareWithVet()">
+                        <div class="quick-action-icon">👩‍⚕️</div>
+                        <div class="quick-action-title">Compartir con Veterinario</div>
+                        <div class="quick-action-desc">Enviar historial a especialista</div>
+                    </a>
+                    
+                    <a href="#" class="quick-action" onclick="printSummary()">
+                        <div class="quick-action-icon">🖨️</div>
+                        <div class="quick-action-title">Imprimir Resumen</div>
+                        <div class="quick-action-desc">Resumen para viajes</div>
+                    </a>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo de Registro</label>
+                            <select class="filter-select" onchange="filterRecords('type', this.value)">
+                                <option value="">Todos los tipos</option>
+                                <option value="consultation">Consultas</option>
+                                <option value="vaccination">Vacunaciones</option>
+                                <option value="surgery">Cirugías</option>
+                                <option value="laboratory">Laboratorio</option>
+                                <option value="grooming">Grooming</option>
+                                <option value="emergency">Urgencias</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Período</label>
+                            <select class="filter-select" onchange="filterRecords('period', this.value)">
+                                <option value="">Todo el historial</option>
+                                <option value="last-month">Último mes</option>
+                                <option value="last-3-months">Últimos 3 meses</option>
+                                <option value="last-6-months">Últimos 6 meses</option>
+                                <option value="last-year">Último año</option>
+                                <option value="custom">Período personalizado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Veterinario</label>
+                            <select class="filter-select" onchange="filterRecords('vet', this.value)">
+                                <option value="">Todos los veterinarios</option>
+                                <option value="dr-martinez">Dr. Rosa Martínez</option>
+                                <option value="dr-lopez">Dr. Carlos López</option>
+                                <option value="dr-garcia">Dr. Ana García</option>
+                                <option value="dr-hernandez">Dr. José Hernández</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Estado</label>
+                            <select class="filter-select" onchange="filterRecords('status', this.value)">
+                                <option value="">Todos los estados</option>
+                                <option value="completed">Completados</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="follow-up">Requiere seguimiento</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Body - Timeline -->
+                <div class="content-body">
+                    <div class="timeline">
+                        <!-- Registro Más Reciente -->
+                        <div class="timeline-item" data-type="consultation" data-vet="dr-martinez" data-date="2025-06-05">
+                            <div class="record-card">
+                                <div class="record-header">
+                                    <div class="record-date-time">
+                                        <div class="record-date">
+                                            <div class="date-day">05</div>
+                                            <div class="date-month">JUN</div>
+                                        </div>
+                                        <div class="record-time">10:30 AM</div>
+                                    </div>
+                                    <div class="record-type type-consultation">Consulta</div>
+                                </div>
+                                
+                                <h4 class="record-title">Consulta General de Rutina</h4>
+                                
+                                <div class="record-content">
+                                    <strong>Motivo de consulta:</strong> Chequeo anual preventivo.<br>
+                                    <strong>Examen físico:</strong> Max se presenta alerta y en buen estado general. Peso estable (28.5 kg). 
+                                    Pelaje brillante, mucosas rosadas, hidratación adecuada. Auscultación cardiopulmonar normal. 
+                                    Palpación abdominal sin hallazgos patológicos.<br>
+                                    <strong>Diagnóstico:</strong> Animal sano en excelentes condiciones.<br>
+                                    <strong>Plan:</strong> Continuar con alimentación actual y ejercicio regular. Próximo control en 6 meses.
+                                </div>
+                                
+                                <div class="record-details">
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Peso: 28.5 kg</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Temperatura: 38.2°C</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">FC: 85 lpm</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Duración: 45 min</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Costo: $45.000</span>
+                                    </div>
+                                </div>
+
+                                <div class="attachments">
+                                    <div class="attachment-list">
+                                        <div class="attachment-item" onclick="viewAttachment('lab-results-060525.pdf')">
+                                            📄 Resultados laboratorio
+                                        </div>
+                                        <div class="attachment-item" onclick="viewAttachment('photos-060525.jpg')">
+                                            📸 Fotografías clínicas
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="record-footer">
+                                    <div class="vet-info">
+                                        <div class="vet-avatar">RM</div>
+                                        <span class="vet-name">Dr. Rosa Martínez</span>
+                                    </div>
+                                    <div class="record-actions">
+                                        <button class="action-btn" onclick="viewFullRecord('consultation-20250605')">Ver Completo</button>
+                                        <button class="action-btn" onclick="shareRecord('consultation-20250605')">Compartir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vacunación -->
+                        <div class="timeline-item" data-type="vaccination" data-vet="dr-lopez" data-date="2025-05-20">
+                            <div class="record-card">
+                                <div class="record-header">
+                                    <div class="record-date-time">
+                                        <div class="record-date">
+                                            <div class="date-day">20</div>
+                                            <div class="date-month">MAY</div>
+                                        </div>
+                                        <div class="record-time">03:00 PM</div>
+                                    </div>
+                                    <div class="record-type type-vaccination">Vacunación</div>
+                                </div>
+                                
+                                <h4 class="record-title">Vacuna Antirrábica Anual</h4>
+                                
+                                <div class="record-content">
+                                    <strong>Vacuna aplicada:</strong> Antirrábica (Rabisin)<br>
+                                    <strong>Lote:</strong> VR2025-045 • <strong>Vencimiento:</strong> Diciembre 2026<br>
+                                    <strong>Vía de administración:</strong> Subcutánea en región escapular derecha<br>
+                                    <strong>Reacciones:</strong> Sin reacciones adversas inmediatas<br>
+                                    <strong>Próxima dosis:</strong> Mayo 2026
+                                </div>
+                                
+                                <div class="record-details">
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9l-5.91 3.74L12 22l-4.09-3.26L2 15l6.91-3.74L12 2z"/>
+                                        </svg>
+                                        <span class="detail-text">Certificado oficial</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                                        </svg>
+                                        <span class="detail-text">Válida hasta: Mayo 2026</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Costo: $35.000</span>
+                                    </div>
+                                </div>
+
+                                <div class="attachments">
+                                    <div class="attachment-list">
+                                        <div class="attachment-item" onclick="viewAttachment('certificado-antirabica-052025.pdf')">
+                                            🏆 Certificado de vacunación
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="record-footer">
+                                    <div class="vet-info">
+                                        <div class="vet-avatar">CL</div>
+                                        <span class="vet-name">Dr. Carlos López</span>
+                                    </div>
+                                    <div class="record-actions">
+                                        <button class="action-btn" onclick="viewFullRecord('vaccination-20250520')">Ver Certificado</button>
+                                        <button class="action-btn" onclick="downloadCertificate('vaccination-20250520')">Descargar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cirugía -->
+                        <div class="timeline-item surgery" data-type="surgery" data-vet="dr-hernandez" data-date="2024-11-15">
+                            <div class="record-card">
+                                <div class="record-header">
+                                    <div class="record-date-time">
+                                        <div class="record-date">
+                                            <div class="date-day">15</div>
+                                            <div class="date-month">NOV</div>
+                                        </div>
+                                        <div class="record-time">09:00 AM</div>
+                                    </div>
+                                    <div class="record-type type-surgery">Cirugía</div>
+                                </div>
+                                
+                                <h4 class="record-title">Esterilización (Castración)</h4>
+                                
+                                <div class="record-content">
+                                    <strong>Procedimiento:</strong> Orquiectomía bilateral<br>
+                                    <strong>Anestesia:</strong> General inhalatoria (Sevoflurano)<br>
+                                    <strong>Duración:</strong> 45 minutos<br>
+                                    <strong>Complicaciones:</strong> Ninguna<br>
+                                    <strong>Post-operatorio:</strong> Recuperación sin incidentes. Alta el mismo día con tratamiento antibiótico y analgésico.<br>
+                                    <strong>Instrucciones:</strong> Reposo relativo por 10 días, collar isabelino, control de sutura en 7 días.
+                                </div>
+                                
+                                <div class="record-details">
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Duración: 45 min</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
+                                        <span class="detail-text">Estado: Exitosa</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9l-5.91 3.74L12 22l-4.09-3.26L2 15l6.91-3.74L12 2z"/>
+                                        </svg>
+                                        <span class="detail-text">Seguimiento completo</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="detail-icon" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                        </svg>
+                                        <span class="detail-text">Costo: $180.000</span>
+                                    </div>
+                                </div>
+
+                                <div class="attachments">
+                                    <div class="attachment-list">
+                                        <div class="attachment-item" onclick="viewAttachment('consentimiento-cirugia-111524.pdf')">
+                                            📋 Consentimiento quirúrgico
+                                        </div>
+                                        <div class="attachment-item" onclick="viewAttachment('reporte-quirurgico-111524.pdf')">
+                                            📄 Reporte quirúrgico
+                                        </div>
+                                        <div class="attachment-item" onclick="viewAttachment('fotos-postop-111524.jpg')">
+                                            📸 Fotos post-operatorias
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="record-footer">
+                                    <div class="vet-info">
+                                        <div class="vet-avatar">JH</div>
+                                        <span class="vet-name">Dr. José Hernández</span>
+                                    </div>
+                                    <div class="record-actions">
+                                        <button class="action-btn" onclick="viewFullRecord('surgery-20241115')">Ver Completo</button>
+                                        <button class="action-btn" onclick="viewSurgicalReport('surgery-20241115')">Reporte Quirúrgico</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Más registros continúan... -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/navigation.js"></script>
+    <script src="../js/sweetalert2.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function filterRecords(filterType, value) {
+            const records = document.querySelectorAll('.timeline-item');
+            
+            records.forEach(record => {
+                let show = true;
+                
+                switch(filterType) {
+                    case 'type':
+                        if (value && record.dataset.type !== value) {
+                            show = false;
+                        }
+                        break;
+                    case 'vet':
+                        if (value && record.dataset.vet !== value) {
+                            show = false;
+                        }
+                        break;
+                    case 'period':
+                        // Implementar filtro por período
+                        break;
+                    case 'status':
+                        // Implementar filtro por estado
+                        break;
+                }
+                
+                record.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        function viewFullRecord(recordId) {
+            Swal.fire({
+                title: 'Registro Médico Completo',
+                html: `
+                    <div style="text-align: left; max-height: 400px; overflow-y: auto;">
+                        <h4>Consulta General - 5 de Junio, 2025</h4>
+                        <hr>
+                        <p><strong>Veterinario:</strong> Dr. Rosa Martínez</p>
+                        <p><strong>Hora de inicio:</strong> 10:30 AM</p>
+                        <p><strong>Hora de fin:</strong> 11:15 AM</p>
+                        <hr>
+                        <h5>Anamnesis:</h5>
+                        <p>Propietario refiere que Max se encuentra en buen estado general. No ha presentado síntomas de enfermedad. Mantiene buen apetito y actividad normal.</p>
+                        <h5>Examen Físico:</h5>
+                        <p>• <strong>Estado general:</strong> Alerta, responsivo<br>
+                        • <strong>Peso:</strong> 28.5 kg (peso ideal)<br>
+                        • <strong>Temperatura:</strong> 38.2°C<br>
+                        • <strong>Frecuencia cardíaca:</strong> 85 lpm<br>
+                        • <strong>Frecuencia respiratoria:</strong> 22 rpm<br>
+                        • <strong>Mucosas:</strong> Rosadas, tiempo de llenado capilar < 2 seg<br>
+                        • <strong>Hidratación:</strong> Adecuada<br>
+                        • <strong>Piel y pelo:</strong> Sin alteraciones, pelaje brillante<br>
+                        • <strong>Ojos:</strong> Sin secreciones, pupilas reactivas<br>
+                        • <strong>Oídos:</strong> Limpios, sin olor<br>
+                        • <strong>Cavidad oral:</strong> Dentadura completa, sarro leve<br>
+                        • <strong>Auscultación:</strong> Corazón y pulmones normales<br>
+                        • <strong>Palpación abdominal:</strong> Sin masas ni dolor<br>
+                        • <strong>Extremidades:</strong> Sin cojeras ni dolor articular</p>
+                        <h5>Diagnóstico:</h5>
+                        <p>Animal clínicamente sano</p>
+                        <h5>Plan:</h5>
+                        <p>• Continuar con alimentación actual<br>
+                        • Ejercicio regular<br>
+                        • Limpieza dental profiláctica en 3 meses<br>
+                        • Próximo control: 6 meses</p>
+                    </div>
+                `,
+                width: 700,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#2E7D5E'
+            });
+        }
+
+        function shareRecord(recordId) {
+            Swal.fire({
+                title: 'Compartir Registro',
+                text: '¿Cómo deseas compartir este registro médico?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: '📧 Por Email',
+                denyButtonText: '📱 Por WhatsApp',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2E7D5E',
+                denyButtonColor: '#25D366'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    shareByEmail(recordId);
+                } else if (result.isDenied) {
+                    shareByWhatsApp(recordId);
+                }
+            });
+        }
+
+        function shareByEmail(recordId) {
+            Swal.fire({
+                title: 'Compartir por Email',
+                input: 'email',
+                inputLabel: 'Correo electrónico del destinatario',
+                inputPlaceholder: 'veterinario@ejemplo.com',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2E7D5E'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    Swal.fire({
+                        title: 'Enviando...',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                    
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: '¡Enviado!',
+                            text: 'El registro médico ha sido enviado exitosamente.',
+                            icon: 'success',
+                            confirmButtonColor: '#2E7D5E'
+                        });
+                    }, 2000);
+                }
+            });
+        }
+
+        function shareByWhatsApp(recordId) {
+            const message = encodeURIComponent('Historial médico de Max - Consulta del 5 de Junio, 2025. Ver registro completo en VetUni.');
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        }
+
+        function viewAttachment(filename) {
+            Swal.fire({
+                title: 'Visualizar Archivo',
+                text: `Abriendo ${filename}...`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Descargar',
+                cancelButtonText: 'Cerrar',
+                confirmButtonColor: '#2E7D5E'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Simular descarga
+                    Swal.fire({
+                        title: 'Descargando...',
+                        text: 'El archivo se está descargando.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        function downloadCertificate(recordId) {
+            Swal.fire({
+                title: 'Descargando Certificado...',
+                text: 'El certificado de vacunación se está generando.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            setTimeout(() => {
+                Swal.fire({
+                    title: '¡Listo!',
+                    text: 'El certificado ha sido descargado exitosamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#2E7D5E'
+                });
+            }, 3000);
+        }
+
+        function exportFullHistory() {
+            Swal.fire({
+                title: 'Exportar Historial Completo',
+                text: '¿En qué formato deseas exportar?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: '📄 PDF Completo',
+                denyButtonText: '📊 Resumen Excel',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2E7D5E',
+                denyButtonColor: '#3B82F6'
+            }).then((result) => {
+                if (result.isConfirmed || result.isDenied) {
+                    const format = result.isConfirmed ? 'PDF' : 'Excel';
+                    
+                    Swal.fire({
+                        title: `Generando ${format}...`,
+                        text: 'Por favor espera mientras se genera el archivo.',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                    
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: '¡Exportación Completa!',
+                            text: `El historial médico ha sido exportado en formato ${format}.`,
+                            icon: 'success',
+                            confirmButtonColor: '#2E7D5E'
+                        });
+                    }, 4000);
+                }
+            });
+        }
+
+        function addNewRecord() {
+            Swal.fire({
+                title: 'Nuevo Registro Médico',
+                text: 'Esta función está disponible solo para veterinarios autorizados.',
+                icon: 'info',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#2E7D5E'
+            });
+        }
+
+        function requestRecords() {
+            Swal.fire({
+                title: 'Solicitar Copias Oficiales',
+                html: `
+                    <div style="text-align: left;">
+                        <p>Selecciona los registros que necesitas:</p>
+                        <label><input type="checkbox" checked> Historial médico completo</label><br>
+                        <label><input type="checkbox" checked> Certificados de vacunación</label><br>
+                        <label><input type="checkbox"> Reportes quirúrgicos</label><br>
+                        <label><input type="checkbox"> Resultados de laboratorio</label><br><br>
+                        <label for="purpose">Propósito de la solicitud:</label><br>
+                        <select id="purpose" style="width: 100%; padding: 8px; margin-top: 5px;">
+                            <option>Viaje internacional</option>
+                            <option>Segunda opinión</option>
+                            <option>Cambio de veterinario</option>
+                            <option>Seguro de mascotas</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Solicitar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2E7D5E'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: '¡Solicitud Enviada!',
+                        text: 'Recibirás las copias oficiales en tu correo en 24-48 horas.',
+                        icon: 'success',
+                        confirmButtonColor: '#2E7D5E'
+                    });
+                }
+            });
+        }
+
+        function shareWithVet() {
+            Swal.fire({
+                title: 'Compartir con Veterinario',
+                input: 'email',
+                inputLabel: 'Email del veterinario',
+                inputPlaceholder: 'veterinario@clinica.com',
+                text: 'El historial se compartirá de forma segura con el veterinario especificado.',
+                showCancelButton: true,
+                confirmButtonText: 'Compartir',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2E7D5E'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    Swal.fire({
+                        title: '¡Compartido!',
+                        text: 'El historial médico ha sido compartido exitosamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#2E7D5E'
+                    });
+                }
+            });
+        }
+
+        function printSummary() {
+            Swal.fire({
+                title: 'Preparando Resumen...',
+                text: 'Generando resumen médico optimizado para imprimir.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            setTimeout(() => {
+                window.print();
+                Swal.close();
+            }, 2000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Shared medical history page loaded');
+        });
+    </script>
+</body>
+</html>

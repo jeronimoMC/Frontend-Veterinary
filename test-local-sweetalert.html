@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SweetAlert2 Local</title>
+    
+    <!-- SweetAlert2 CSS LOCAL -->
+    <link rel="stylesheet" href="css/sweetalert2.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            padding: 50px;
+            text-align: center;
+            background: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .title {
+            color: #111827;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6B7280;
+            margin-bottom: 30px;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+        
+        .status {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+        
+        .status.error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🧪 Test SweetAlert2</h1>
+        <p class="subtitle">Verificando que los archivos locales funcionan correctamente</p>
+        
+        <div id="status" class="status">
+            🔄 Cargando SweetAlert2...
+        </div>
+        
+        <div class="grid">
+            <button class="test-button" onclick="testSuccess()">✅ Success</button>
+            <button class="test-button" onclick="testError()">❌ Error</button>
+            <button class="test-button" onclick="testWarning()">⚠️ Warning</button>
+            <button class="test-button" onclick="testInfo()">ℹ️ Info</button>
+            <button class="test-button" onclick="testConfirm()">❓ Confirm</button>
+            <button class="test-button" onclick="testVetUni()">🏥 VetUni</button>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS LOCAL -->
+    <script src="js/sweetalert2.min.js"></script>
+    
+    <script>
+        // Verificar que SweetAlert2 está cargado
+        function checkSweetAlert() {
+            const statusDiv = document.getElementById('status');
+            
+            if (typeof Swal === 'undefined') {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ ERROR: SweetAlert2 NO se cargó. Verifica las rutas de los archivos.';
+                console.error('❌ SweetAlert2 no está disponible');
+                return false;
+            } else {
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ ÉXITO: SweetAlert2 cargado correctamente desde archivos locales.';
+                console.log('✅ SweetAlert2 cargado correctamente');
+                return true;
+            }
+        }
+
+        function testSuccess() {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Perfecto!',
+                text: 'Los archivos locales de SweetAlert2 funcionan correctamente',
+                confirmButtonColor: '#2E7D5E',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        function testError() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Prueba',
+                text: 'Esta es una alerta de error para verificar el funcionamiento',
+                confirmButtonColor: '#EF4444'
+            });
+        }
+
+        function testWarning() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Esta es una alerta de advertencia',
+                confirmButtonColor: '#F59E0B'
+            });
+        }
+
+        function testInfo() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Información',
+                text: 'Los archivos están cargados desde tu carpeta local',
+                confirmButtonColor: '#3B82F6'
+            });
+        }
+
+        function testConfirm() {
+            Swal.fire({
+                title: '¿Confirmar acción?',
+                text: "Prueba de diálogo de confirmación",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2E7D5E',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Confirmado!',
+                        text: 'La acción se ejecutó correctamente.',
+                        confirmButtonColor: '#2E7D5E'
+                    });
+                }
+            });
+        }
+
+        function testVetUni() {
+            Swal.fire({
+                title: 'VetUni 🏥',
+                html: `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🐕🐱</div>
+                        <p style="color: #6B7280; margin-bottom: 15px;">Sistema Veterinaria Universitaria</p>
+                        <div style="background: linear-gradient(135deg, #F0F9FF, #E0F2FE); padding: 15px; border-radius: 12px; border: 1px solid #BAE6FD;">
+                            <strong style="color: #0C4A6E;">Universidad Alexander von Humboldt</strong><br>
+                            <small style="color: #075985;">Cuidando la salud de nuestras mascotas</small>
+                        </div>
+                    </div>
+                `,
+                confirmButtonColor: '#2E7D5E',
+                confirmButtonText: '¡Excelente!',
+                width: 500,
+                background: '#ffffff',
+                backdrop: `
+                    rgba(46, 125, 94, 0.1)
+                    left top
+                    no-repeat
+                `
+            });
+        }
+
+        // Verificar al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                checkSweetAlert();
+                
+                // Si funciona, mostrar alerta de bienvenida
+                if (typeof Swal !== 'undefined') {
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: '🎉 ¡Funcionando!',
+                            text: 'SweetAlert2 se cargó desde archivos locales',
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end',
+                            customClass: {
+                                popup: 'colored-toast'
+                            }
+                        });
+                    }, 1000);
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

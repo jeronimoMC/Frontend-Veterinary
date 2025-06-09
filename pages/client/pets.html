@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetUni - Mis Mascotas</title>
+    <link rel="stylesheet" href="../../css/sweetalert2.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
+            color: #111827;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-button {
+            width: 50px;
+            height: 50px;
+            background: #F3F4F6;
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #E5E7EB;
+            transform: translateY(-2px);
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            fill: #6B7280;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #6B7280;
+            font-size: 1.1rem;
+        }
+
+        .add-pet-button {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-pet-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+
+        /* Pets Grid */
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .pet-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .pet-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #2E7D5E;
+        }
+
+        .pet-header {
+            height: 120px;
+            background: linear-gradient(135deg, var(--pet-color-start), var(--pet-color-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pet-card.dog {
+            --pet-color-start: #F59E0B;
+            --pet-color-end: #D97706;
+        }
+
+        .pet-card.cat {
+            --pet-color-start: #8B5CF6;
+            --pet-color-end: #7C3AED;
+        }
+
+        .pet-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .pet-avatar {
+            font-size: 4rem;
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+
+        .pet-status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .pet-content {
+            padding: 25px;
+        }
+
+        .pet-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .pet-breed {
+            color: #6B7280;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .pet-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-icon {
+            width: 16px;
+            height: 16px;
+            fill: #6B7280;
+        }
+
+        .detail-text {
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .pet-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: #F3F4F6;
+            color: #6B7280;
+            border: 2px solid #E5E7EB;
+        }
+
+        .action-btn.secondary:hover {
+            background: #E5E7EB;
+            color: #374151;
+        }
+
+        .action-btn.danger {
+            background: #FEF2F2;
+            color: #EF4444;
+            border: 2px solid #FECACA;
+        }
+
+        .action-btn.danger:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        /* Health Status */
+        .health-status {
+            margin-bottom: 15px;
+        }
+
+        .health-indicators {
+            display: flex;
+            gap: 8px;
+        }
+
+        .health-indicator {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .health-indicator.healthy {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .health-indicator.vaccinated {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .health-indicator.due {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .health-indicator.alert {
+            background: #FEF2F2;
+            color: #991B1B;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #F9FAFB, #E5E7EB);
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2E7D5E;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6B7280;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            border: 2px dashed #E5E7EB;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #6B7280;
+            margin-bottom: 30px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .modal-subtitle {
+            opacity: 0.9;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .close-button svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .detail-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .detail-section h4 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section p {
+            color: #6B7280;
+            line-height: 1.6;
+        }
+
+        .detail-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .detail-list-item strong {
+            color: #111827;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .pets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pet-details {
+                grid-template-columns: 1fr;
+            }
+
+            .pet-actions {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="back-button" onclick="navigateTo('dashboard.html')">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                    </button>
+                    
+                    <div>
+                        <h1 class="page-title">Mis Mascotas</h1>
+                        <p class="page-subtitle">Gestiona la información y salud de tus mascotas</p>
+                    </div>
+                </div>
+                
+                <button class="add-pet-button" onclick="addNewPet()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    Agregar Mascota
+                </button>
+            </div>
+        </div>
+
+        <div class="quick-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalPets">2</div>
+                    <div class="stat-label">Total Mascotas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="healthyPets">2</div>
+                    <div class="stat-label">Saludables</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="upcomingVaccines">1</div>
+                    <div class="stat-label">Vacunas Pendientes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalVisits">8</div>
+                    <div class="stat-label">Visitas Totales</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pets-grid" id="petsGrid">
+            <!-- Las mascotas se cargarán dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Pet Details Modal -->
+    <div class="modal-overlay" id="petModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="close-button" onclick="closePetModal()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+                <h3 class="modal-title" id="modalPetName">Max</h3>
+                <p class="modal-subtitle" id="modalPetBreed">Golden Retriever</p>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-section">
+                        <h4>📋 Información General</h4>
+                        <div class="detail-list" id="modalGeneralInfo">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>🏥 Estado de Salud</h4>
+                        <div class="health-indicators" id="modalHealthStatus">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                        <p style="margin-top: 15px;" id="modalHealthNotes">Estado de salud general excelente. Última revisión sin novedades.</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>📅 Próximas Citas</h4>
+                        <div id="modalUpcomingAppointments">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>⚡ Acciones Rápidas</h4>
+                        <div class="pet-actions">
+                            <button class="action-btn primary" onclick="scheduleAppointment()">Agendar Cita</button>
+                            <button class="action-btn secondary" onclick="viewMedicalHistory()">Ver Historial</button>
+                            <button class="action-btn secondary" onclick="editPet()">Editar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/sweetalert2.min.js"></script>
+    <script src="../js/global.js"></script>
+    <script>
+        let currentPet = null;
+
+        // Cargar mascotas
+        function loadPets() {
+            const pets = getData('pets');
+            const petsGrid = document.getElementById('petsGrid');
+            
+            if (pets.length === 0) {
+                petsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🐾</div>
+                        <h3 class="empty-title">No tienes mascotas registradas</h3>
+                        <p class="empty-text">Agrega tu primera mascota para comenzar a gestionar su información y citas veterinarias.</p>
+                        <button class="add-pet-button" onclick="addNewPet()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            Agregar Primera Mascota
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            petsGrid.innerHTML = pets.map(pet => `
+                <div class="pet-card ${pet.species.toLowerCase()}" onclick="showPetDetails('${pet.id}')">
+                    <div class="pet-header">
+                        <div class="pet-avatar">${pet.avatar}</div>
+                        <div class="pet-status-badge">${pet.status}</div>
+                    </div>
+                    <div class="pet-content">
+                        <h3 class="pet-name">${pet.name}</h3>
+                        <p class="pet-breed">${pet.breed} • ${pet.age} años</p>
+                        
+                        <div class="health-status">
+                            <div class="health-indicators">
+                                <span class="health-indicator healthy">Saludable</span>
+                                ${pet.name === 'Luna' ? '<span class="health-indicator due">Vacuna pendiente</span>' : '<span class="health-indicator vaccinated">Vacunado</span>'}
+                            </div>
+                        </div>
+
+                        <div class="pet-details">
+                            <div class="detail-item">
+                                <svg class="detail-icon" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                <span class="detail-text">${pet.weight} kg</span>
+                            </div>
+                            <div class="detail-item">
+                                <svg class="detail-icon" viewBox="0 0 24 24">
+                                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2-7h-3V2h-2v2H8V2H6v2H3c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1z"/>
+                                </svg>
+                                <span class="detail-text">${formatDate(pet.lastVisit)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <svg class="detail-icon" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9l-5.91 3.74L12 22l-4.09-3.26L2 15l6.91-3.74L12 2z"/>
+                                </svg>
+                                <span class="detail-text">${pet.color}</span>
+                            </div>
+                            <div class="detail-item">
+                                <svg class="detail-icon" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                </svg>
+                                <span class="detail-text">Microchip</span>
+                            </div>
+                        </div>
+
+                        <div class="pet-actions">
+                            <button class="action-btn primary" onclick="event.stopPropagation(); quickSchedule('${pet.id}')">Agendar</button>
+                            <button class="action-btn secondary" onclick="event.stopPropagation(); quickHistory('${pet.id}')">Historial</button>
+                            <button class="action-btn secondary" onclick="event.stopPropagation(); showPetDetails('${pet.id}')">Ver Más</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Actualizar estadísticas
+            updateStats(pets);
+        }
+
+        function updateStats(pets) {
+            document.getElementById('totalPets').textContent = pets.length;
+            document.getElementById('healthyPets').textContent = pets.length; // Simulado
+            document.getElementById('upcomingVaccines').textContent = '1'; // Simulado
+            document.getElementById('totalVisits').textContent = '8'; // Simulado
+        }
+
+        function showPetDetails(petId) {
+            const pet = getData('pets').find(p => p.id === petId);
+            if (!pet) return;
+
+            currentPet = pet;
+
+            // Actualizar información en el modal
+            document.getElementById('modalPetName').textContent = pet.name;
+            document.getElementById('modalPetBreed').textContent = `${pet.breed} • ${pet.age} años`;
+
+            // Información general
+            const generalInfo = document.getElementById('modalGeneralInfo');
+            generalInfo.innerHTML = `
+                <div class="detail-list-item">
+                    <span>Especie:</span>
+                    <strong>${pet.species}</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Raza:</span>
+                    <strong>${pet.breed}</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Edad:</span>
+                    <strong>${pet.age} años</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Peso:</span>
+                    <strong>${pet.weight} kg</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Color:</span>
+                    <strong>${pet.color}</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Microchip:</span>
+                    <strong>${pet.microchip}</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Nacimiento:</span>
+                    <strong>${formatDate(pet.birthDate)}</strong>
+                </div>
+                <div class="detail-list-item">
+                    <span>Estado:</span>
+                    <strong>${pet.status}</strong>
+                </div>
+            `;
+
+            // Estado de salud
+            const healthStatus = document.getElementById('modalHealthStatus');
+            healthStatus.innerHTML = `
+                <span class="health-indicator healthy">Saludable</span>
+                ${pet.name === 'Luna' ? '<span class="health-indicator due">Vacuna pendiente</span>' : '<span class="health-indicator vaccinated">Vacunado</span>'}
+            `;
+
+            // Próximas citas
+            const appointments = getData('appointments').filter(apt => apt.petId === petId);
+            const upcomingAppointments = document.getElementById('modalUpcomingAppointments');
+            
+            if (appointments.length > 0) {
+                upcomingAppointments.innerHTML = appointments.map(apt => `
+                    <div class="detail-list-item">
+                        <span>${apt.service}</span>
+                        <strong>${formatDate(apt.date)} - ${apt.time}</strong>
+                    </div>
+                `).join('');
+            } else {
+                upcomingAppointments.innerHTML = '<p style="color: #6B7280; font-style: italic;">No hay citas programadas</p>';
+            }
+
+            document.getElementById('petModal').classList.add('show');
+        }
+
+        function closePetModal() {
+            document.getElementById('petModal').classList.remove('show');
+            currentPet = null;
+        }
+
+        function addNewPet() {
+            VetAlert.info(
+                'Agregar Nueva Mascota',
+                'Esta funcionalidad permitirá registrar una nueva mascota con toda su información.'
+            );
+        }
+
+        function quickSchedule(petId) {
+            const pet = getData('pets').find(p => p.id === petId);
+            VetAlert.info(
+                `Agendar cita para ${pet.name}`,
+                'Redirigiendo al sistema de agendamiento...'
+            );
+        }
+
+        function quickHistory(petId) {
+            const pet = getData('pets').find(p => p.id === petId);
+            VetAlert.info(
+                `Historial médico de ${pet.name}`,
+                'Redirigiendo al historial médico completo...'
+            );
+        }
+
+        function scheduleAppointment() {
+            if (currentPet) {
+                VetAlert.info(
+                    `Agendar cita para ${currentPet.name}`,
+                    'Redirigiendo al sistema de agendamiento...'
+                );
+                closePetModal();
+            }
+        }
+
+        function viewMedicalHistory() {
+            if (currentPet) {
+                VetAlert.info(
+                    `Historial médico de ${currentPet.name}`,
+                    'Redirigiendo al historial médico completo...'
+                );
+                closePetModal();
+            }
+        }
+
+        function editPet() {
+            if (currentPet) {
+                VetAlert.info(
+                    `Editar información de ${currentPet.name}`,
+                    'Esta funcionalidad permitirá modificar la información de la mascota.'
+                );
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('petModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePetModal();
+            }
+        });
+
+        // Teclas de atajo
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePetModal();
+            }
+        });
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPets();
+        });
+    </script>
+</body>
+</html>

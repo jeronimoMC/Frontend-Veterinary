@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetUni - Nuestros Servicios</title>
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="../../css/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%);
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid #E5E7EB;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+        }
+
+        .back-button {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 50px;
+            height: 50px;
+            background: #F3F4F6;
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #E5E7EB;
+            transform: translateY(-2px);
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            fill: #6B7280;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #6B7280;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .university-badge {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .services-navigation {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .service-categories {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 24px;
+            border-radius: 25px;
+            background: #F3F4F6;
+            border: 2px solid transparent;
+            color: #6B7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+
+        .category-icon {
+            font-size: 16px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #2E7D5E;
+        }
+
+        .service-header {
+            height: 120px;
+            background: linear-gradient(135deg, var(--service-color-start), var(--service-color-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card.consultation {
+            --service-color-start: #3B82F6;
+            --service-color-end: #1D4ED8;
+        }
+
+        .service-card.surgery {
+            --service-color-start: #EF4444;
+            --service-color-end: #DC2626;
+        }
+
+        .service-card.vaccination {
+            --service-color-start: #10B981;
+            --service-color-end: #059669;
+        }
+
+        .service-card.grooming {
+            --service-color-start: #8B5CF6;
+            --service-color-end: #7C3AED;
+        }
+
+        .service-card.emergency {
+            --service-color-start: #F59E0B;
+            --service-color-end: #D97706;
+        }
+
+        .service-card.laboratory {
+            --service-color-start: #06B6D4;
+            --service-color-end: #0891B2;
+        }
+
+        .service-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: white;
+            z-index: 1;
+            position: relative;
+        }
+
+        .service-content {
+            padding: 25px;
+        }
+
+        .service-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .service-description {
+            color: #6B7280;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .service-features {
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .feature-icon {
+            width: 16px;
+            height: 16px;
+            fill: #10B981;
+            flex-shrink: 0;
+        }
+
+        .service-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #F3F4F6;
+        }
+
+        .service-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 0.8rem;
+            color: #6B7280;
+            margin-bottom: 2px;
+        }
+
+        .price-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2E7D5E;
+        }
+
+        .service-duration {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6B7280;
+            font-size: 0.85rem;
+        }
+
+        .duration-icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 94, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: #F3F4F6;
+            color: #6B7280;
+            border: 2px solid #E5E7EB;
+        }
+
+        .action-btn.secondary:hover {
+            background: #E5E7EB;
+            color: #374151;
+        }
+
+        .emergency-banner {
+            background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+            border: 2px solid #FECACA;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .emergency-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .emergency-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #991B1B;
+            margin-bottom: 10px;
+        }
+
+        .emergency-text {
+            color: #B91C1C;
+            margin-bottom: 20px;
+        }
+
+        .emergency-contact {
+            background: #EF4444;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .emergency-contact:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
+
+        .contact-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #F9FAFB;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2E7D5E, #1E3A8A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .contact-info h4 {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .contact-info p {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, var(--modal-color-start), var(--modal-color-end));
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .close-button svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .modal-section p {
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .modal-features {
+            display: grid;
+            gap: 10px;
+        }
+
+        .modal-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .modal-feature-icon {
+            width: 20px;
+            height: 20px;
+            fill: #10B981;
+        }
+
+        .modal-pricing {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2E7D5E;
+            margin-bottom: 10px;
+        }
+
+        .modal-price-note {
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            padding: 30px;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .back-button {
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .service-categories {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="navigateTo('dashboard.html')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </button>
+            
+            <div class="header-icon">🏥</div>
+            <h1 class="page-title">Nuestros Servicios</h1>
+            <p class="page-subtitle">Ofrecemos atención veterinaria integral con los más altos estándares de calidad para el cuidado de tu mascota</p>
+            <div class="university-badge">Universidad Alexander von Humboldt</div>
+        </div>
+
+        <div class="services-navigation">
+            <h3 class="nav-title">Categorías de Servicios</h3>
+            <div class="service-categories">
+                <a href="#" class="category-btn active" onclick="filterServices('all')">
+                    <span class="category-icon">🏥</span>
+                    Todos los Servicios
+                </a>
+                <a href="#" class="category-btn" onclick="filterServices('consultation')">
+                    <span class="category-icon">🩺</span>
+                    Consultas
+                </a>
+                <a href="#" class="category-btn" onclick="filterServices('surgery')">
+                    <span class="category-icon">⚕️</span>
+                    Cirugías
+                </a>
+                <a href="#" class="category-btn" onclick="filterServices('prevention')">
+                    <span class="category-icon">💉</span>
+                    Prevención
+                </a>
+                <a href="#" class="category-btn" onclick="filterServices('grooming')">
+                    <span class="category-icon">✂️</span>
+                    Estética
+                </a>
+                <a href="#" class="category-btn" onclick="filterServices('emergency')">
+                    <span class="category-icon">🚨</span>
+                    Urgencias
+                </a>
+            </div>
+        </div>
+
+        <div class="emergency-banner">
+            <div class="emergency-icon">🚨</div>
+            <h3 class="emergency-title">Servicio de Urgencias 24/7</h3>
+            <p class="emergency-text">¿Tu mascota necesita atención inmediata? Nuestro equipo de urgencias está disponible las 24 horas.</p>
+            <button class="emergency-contact" onclick="callEmergency()">
+                📞 Llamar Urgencias: +57 300 123 4567
+            </button>
+        </div>
+
+        <div class="services-grid">
+            <!-- Consulta General -->
+            <div class="service-card consultation" data-category="consultation" onclick="showServiceDetails('consultation')">
+                <div class="service-header">
+                    <div class="service-icon">🩺</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Consulta General</h3>
+                    <p class="service-description">Examen médico completo para evaluar el estado de salud general de tu mascota con diagnóstico profesional.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Examen físico completo
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Diagnóstico profesional
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Plan de tratamiento personalizado
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$45.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            30-45 min
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="scheduleAppointment('consultation')">Agendar Cita</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('consultation')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacunación -->
+            <div class="service-card vaccination" data-category="prevention" onclick="showServiceDetails('vaccination')">
+                <div class="service-header">
+                    <div class="service-icon">💉</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Vacunación</h3>
+                    <p class="service-description">Protección completa con vacunas actualizadas según el calendario veterinario para prevenir enfermedades.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Vacunas importadas certificadas
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Certificado oficial incluido
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Seguimiento post-vacunación
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$35.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            15-20 min
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="scheduleAppointment('vaccination')">Agendar Cita</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('vaccination')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cirugía -->
+            <div class="service-card surgery" data-category="surgery" onclick="showServiceDetails('surgery')">
+                <div class="service-header">
+                    <div class="service-icon">⚕️</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Cirugías</h3>
+                    <p class="service-description">Procedimientos quirúrgicos especializados realizados por cirujanos veterinarios con equipos de última tecnología.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Quirófano equipado
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Monitoreo especializado
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Cuidado post-operatorio
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$150.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            1-3 horas
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="scheduleAppointment('surgery')">Consultar</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('surgery')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grooming -->
+            <div class="service-card grooming" data-category="grooming" onclick="showServiceDetails('grooming')">
+                <div class="service-header">
+                    <div class="service-icon">✂️</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Grooming</h3>
+                    <p class="service-description">Servicio completo de estética y bienestar para mantener a tu mascota limpia, saludable y hermosa.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Baño con productos especializados
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Corte de pelo personalizado
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Corte de uñas incluido
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$25.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            45-60 min
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="scheduleAppointment('grooming')">Agendar Cita</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('grooming')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Laboratorio -->
+            <div class="service-card laboratory" data-category="consultation" onclick="showServiceDetails('laboratory')">
+                <div class="service-header">
+                    <div class="service-icon">🔬</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Laboratorio</h3>
+                    <p class="service-description">Análisis clínicos especializados para diagnóstico preciso con equipos de última generación.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Análisis de sangre completo
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Exámenes de orina
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Resultados en 24 horas
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$55.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            20-30 min
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="scheduleAppointment('laboratory')">Agendar Cita</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('laboratory')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Urgencias -->
+            <div class="service-card emergency" data-category="emergency" onclick="showServiceDetails('emergency')">
+                <div class="service-header">
+                    <div class="service-icon">🚨</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">Urgencias 24/7</h3>
+                    <p class="service-description">Atención médica inmediata las 24 horas del día para emergencias veterinarias que requieren intervención rápida.</p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Atención inmediata 24/7
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Veterinario de guardia
+                        </div>
+                        <div class="feature-item">
+                            <svg class="feature-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Equipos de emergencia
+                        </div>
+                    </div>
+
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-label">Desde</span>
+                            <span class="price-value">$80.000</span>
+                        </div>
+                        <div class="service-duration">
+                            <svg class="duration-icon" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            Inmediato
+                        </div>
+                    </div>
+
+                    <div class="service-actions">
+                        <button class="action-btn primary" onclick="callEmergency()">Llamar Urgencias</button>
+                        <button class="action-btn secondary" onclick="showServiceDetails('emergency')">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-section">
+            <h2 class="contact-title">¿Necesitas más información?</h2>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-info">
+                        <h4>Teléfono</h4>
+                        <p>+57 300 123 4567</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-info">
+                        <h4>Email</h4>
+                        <p>info@vetuni.edu.co</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-info">
+                        <h4>Dirección</h4>
+                        <p>Calle 123 #45-67, Armenia</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">🕒</div>
+                    <div class="contact-info">
+                        <h4>Horarios</h4>
+                        <p>Lun-Vie: 8AM-6PM<br>Sáb: 8AM-2PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Details Modal -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal">
+            <div class="modal-header" id="modalHeader">
+                <button class="close-button" onclick="closeServiceModal()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+                <div class="modal-icon" id="modalIcon">🩺</div>
+                <h3 class="modal-title" id="modalTitle">Consulta General</h3>
+                <p class="modal-subtitle" id="modalSubtitle">Examen médico completo para tu mascota</p>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4>¿Qué incluye este servicio?</h4>
+                    <p id="modalDescription">Examen médico completo para evaluar el estado de salud general de tu mascota con diagnóstico profesional.</p>
+                    
+                    <div class="modal-features" id="modalFeatures">
+                        <!-- Features will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Proceso del servicio</h4>
+                    <p id="modalProcess">Nuestro veterinario realizará un examen físico completo, evaluará el historial médico y proporcionará recomendaciones personalizadas.</p>
+                </div>
+
+                <div class="modal-pricing">
+                    <div class="modal-price" id="modalPrice">$45.000</div>
+                    <div class="modal-price-note">*Precios pueden variar según complejidad del caso</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeServiceModal()">Cerrar</button>
+                <button class="action-btn primary" id="modalActionBtn" onclick="scheduleFromModal()">Agendar Cita</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="../../js/sweetalert2.min.js"></script>
+    <script src="../../js/global.js"></script>
+    
+    <script>
+        let currentService = null;
+
+        const serviceData = {
+            consultation: {
+                icon: '🩺',
+                title: 'Consulta General',
+                subtitle: 'Examen médico completo para tu mascota',
+                description: 'Examen médico completo para evaluar el estado de salud general de tu mascota con diagnóstico profesional.',
+                process: 'Nuestro veterinario realizará un examen físico completo, evaluará el historial médico y proporcionará recomendaciones personalizadas.',
+                price: '$45.000',
+                colorStart: '#3B82F6',
+                colorEnd: '#1D4ED8',
+                features: [
+                    'Examen físico completo',
+                    'Revisión de signos vitales',
+                    'Evaluación del comportamiento',
+                    'Diagnóstico profesional',
+                    'Plan de tratamiento personalizado',
+                    'Recomendaciones de cuidado'
+                ]
+            },
+            vaccination: {
+                icon: '💉',
+                title: 'Vacunación',
+                subtitle: 'Protección completa para tu mascota',
+                description: 'Protección completa con vacunas actualizadas según el calendario veterinario para prevenir enfermedades.',
+                process: 'Evaluamos el estado de salud, verificamos el historial de vacunación y aplicamos las vacunas necesarias según la edad y especie.',
+                price: '$35.000',
+                colorStart: '#10B981',
+                colorEnd: '#059669',
+                features: [
+                    'Vacunas importadas certificadas',
+                    'Certificado oficial incluido',
+                    'Seguimiento post-vacunación',
+                    'Calendario personalizado',
+                    'Recordatorios automáticos',
+                    'Protección anual garantizada'
+                ]
+            },
+            surgery: {
+                icon: '⚕️',
+                title: 'Cirugías',
+                subtitle: 'Procedimientos quirúrgicos especializados',
+                description: 'Procedimientos quirúrgicos especializados realizados por cirujanos veterinarios con equipos de última tecnología.',
+                process: 'Evaluación pre-quirúrgica, anestesia segura, cirugía especializada y cuidado post-operatorio hasta la recuperación completa.',
+                price: '$150.000',
+                colorStart: '#EF4444',
+                colorEnd: '#DC2626',
+                features: [
+                    'Quirófano completamente equipado',
+                    'Anestesia especializada',
+                    'Monitoreo continuo',
+                    'Cirujano veterinario certificado',
+                    'Cuidado post-operatorio',
+                    'Seguimiento hasta recuperación'
+                ]
+            },
+            grooming: {
+                icon: '✂️',
+                title: 'Grooming',
+                subtitle: 'Estética y bienestar para tu mascota',
+                description: 'Servicio completo de estética y bienestar para mantener a tu mascota limpia, saludable y hermosa.',
+                process: 'Baño con productos especializados, secado, corte personalizado, limpieza de oídos y corte de uñas.',
+                price: '$25.000',
+                colorStart: '#8B5CF6',
+                colorEnd: '#7C3AED',
+                features: [
+                    'Baño con productos especializados',
+                    'Corte de pelo personalizado',
+                    'Corte de uñas incluido',
+                    'Limpieza de oídos',
+                    'Secado profesional',
+                    'Perfume para mascotas'
+                ]
+            },
+            laboratory: {
+                icon: '🔬',
+                title: 'Laboratorio',
+                subtitle: 'Análisis clínicos especializados',
+                description: 'Análisis clínicos especializados para diagnóstico preciso con equipos de última generación.',
+                process: 'Toma de muestras, análisis en laboratorio certificado y entrega de resultados con interpretación veterinaria.',
+                price: '$55.000',
+                colorStart: '#06B6D4',
+                colorEnd: '#0891B2',
+                features: [
+                    'Análisis de sangre completo',
+                    'Exámenes de orina',
+                    'Pruebas hormonales',
+                    'Cultivos bacterianos',
+                    'Resultados en 24 horas',
+                    'Interpretación profesional'
+                ]
+            },
+            emergency: {
+                icon: '🚨',
+                title: 'Urgencias 24/7',
+                subtitle: 'Atención médica inmediata',
+                description: 'Atención médica inmediata las 24 horas del día para emergencias veterinarias que requieren intervención rápida.',
+                process: 'Evaluación inmediata, estabilización del paciente, tratamiento de emergencia y monitoreo hasta la estabilización.',
+                price: '$80.000',
+                colorStart: '#F59E0B',
+                colorEnd: '#D97706',
+                features: [
+                    'Atención inmediata 24/7',
+                    'Veterinario de guardia',
+                    'Equipos de emergencia',
+                    'Monitoreo intensivo',
+                    'Tratamiento inmediato',
+                    'Seguimiento continuo'
+                ]
+            }
+        };
+
+        function filterServices(category) {
+            // Update active category button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter service cards
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function showServiceDetails(serviceId) {
+            currentService = serviceId;
+            const service = serviceData[serviceId];
+            
+            if (!service) return;
+
+            // Update modal header
+            const modalHeader = document.getElementById('modalHeader');
+            modalHeader.style.setProperty('--modal-color-start', service.colorStart);
+            modalHeader.style.setProperty('--modal-color-end', service.colorEnd);
+
+            // Update modal content
+            document.getElementById('modalIcon').textContent = service.icon;
+            document.getElementById('modalTitle').textContent = service.title;
+            document.getElementById('modalSubtitle').textContent = service.subtitle;
+            document.getElementById('modalDescription').textContent = service.description;
+            document.getElementById('modalProcess').textContent = service.process;
+            document.getElementById('modalPrice').textContent = service.price;
+
+            // Update features
+            const featuresContainer = document.getElementById('modalFeatures');
+            featuresContainer.innerHTML = '';
+            service.features.forEach(feature => {
+                const featureDiv = document.createElement('div');
+                featureDiv.className = 'modal-feature';
+                featureDiv.innerHTML = `
+                    <svg class="modal-feature-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    ${feature}
+                `;
+                featuresContainer.appendChild(featureDiv);
+            });
+
+            // Update action button
+            const actionBtn = document.getElementById('modalActionBtn');
+            if (serviceId === 'emergency') {
+                actionBtn.textContent = 'Llamar Urgencias';
+                actionBtn.onclick = callEmergency;
+            } else {
+                actionBtn.textContent = 'Agendar Cita';
+                actionBtn.onclick = scheduleFromModal;
+            }
+
+            document.getElementById('serviceModal').classList.add('show');
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.remove('show');
+            currentService = null;
+        }
+
+        function scheduleAppointment(serviceType) {
+            VetAlert.info(
+                `Agendar ${serviceData[serviceType].title}`,
+                'Redirigiendo al formulario de agendamiento...'
+            );
+        }
+
+        function scheduleFromModal() {
+            if (currentService) {
+                scheduleAppointment(currentService);
+                closeServiceModal();
+            }
+        }
+
+        function callEmergency() {
+            VetAlert.confirm(
+                '🚨 Urgencias Veterinarias',
+                '¿Confirmas que deseas contactar el servicio de urgencias?',
+                'Sí, llamar'
+            ).then((result) => {
+                if (result.isConfirmed) {
+                    VetAlert.success(
+                        'Conectando...',
+                        'Teléfono: +57 300 123 4567'
+                    );
+                }
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('serviceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeServiceModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeServiceModal();
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Services catalog loaded');
+
+            // Add click handlers for category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                });
+            });
+
+            // Add hover effects for service cards
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-8px)';
+                });
+            });
+        });
+    </script>
+    <script src="../../js/navigation.js"></script>
+</body>
+</html>
